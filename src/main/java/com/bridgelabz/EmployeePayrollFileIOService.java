@@ -1,10 +1,15 @@
 package com.bridgelabz;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EmployeePayrollFileIOService {
 
@@ -39,5 +44,21 @@ public class EmployeePayrollFileIOService {
             e.printStackTrace();
         }
         return entries;
+    }
+
+    public List<EmployeePayrollData> readData() {
+        List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
+        try {
+            Files.lines(new File(PAYROLL_FILE_NAME).toPath()).map(line -> line.trim())
+                    .forEach(line -> {
+                        EmployeePayrollData employeePayrollData = new EmployeePayrollData();
+                        int index = line.indexOf(" ");
+                        employeePayrollData.name = line.substring(index + 1).trim();
+                        employeePayrollList.add(employeePayrollData);
+                    });
+            return employeePayrollList;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
