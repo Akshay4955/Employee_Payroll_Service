@@ -32,10 +32,13 @@ public class EmployeePayrollService {
         employeePayrollList.add(new EmployeePayrollData(id, name, salary));
     }
 
-    public long readEmployeePayrollData(IOService ioService) {
+    public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService) {
         if (ioService.equals(IOService.FILE_IO))
             this.employeePayrollList = new EmployeePayrollFileIOService().readData();
-        return employeePayrollList.size();
+        else if (ioService.equals(IOService.DB_IO)) {
+            this.employeePayrollList = new EmployeePayrollDBIOService().readData();
+        }
+        return employeePayrollList;
     }
 
     public void writeEmployeePayrollData(IOService ioService) {
