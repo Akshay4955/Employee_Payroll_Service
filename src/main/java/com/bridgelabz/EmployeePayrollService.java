@@ -1,5 +1,6 @@
 package com.bridgelabz;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -47,6 +48,12 @@ public class EmployeePayrollService {
         return employeePayrollList;
     }
 
+
+    public List<EmployeePayrollData> readEmployeePayrollForDateRange(IOService ioService, LocalDate startDate, LocalDate endDate) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollDBIOService.getEmployeePayrollForDateRange(startDate, endDate);
+        return null;
+    }
 
     public boolean checkEmployeePayrollInSyncWithDB(String name) {
         List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBIOService.getEmployeePayrollData(name);
