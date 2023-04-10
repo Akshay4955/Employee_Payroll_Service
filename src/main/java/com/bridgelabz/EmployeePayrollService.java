@@ -8,9 +8,13 @@ public class EmployeePayrollService {
 
     public enum IOService {CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
     private List<EmployeePayrollData> employeePayrollList;
-    public EmployeePayrollService() {}
+    private EmployeePayrollDBIOService employeePayrollDBIOService;
+    public EmployeePayrollService() {
+        employeePayrollDBIOService = EmployeePayrollDBIOService.getInstance();
+    }
 
     public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
+        this();
         this.employeePayrollList = employeePayrollList;
     }
 
@@ -36,9 +40,29 @@ public class EmployeePayrollService {
         if (ioService.equals(IOService.FILE_IO))
             this.employeePayrollList = new EmployeePayrollFileIOService().readData();
         else if (ioService.equals(IOService.DB_IO)) {
-            this.employeePayrollList = new EmployeePayrollDBIOService().readData();
+            this.employeePayrollList = employeePayrollDBIOService.readData();
         }
         return employeePayrollList;
+    }
+
+
+    public boolean checkEmployeePayrollInSyncWithDB(String name) {
+        List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBIOService.getEmployeePayrollData(name);
+        return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
+    }
+
+    public void updateEmployeeSalary(String name, double salary) {
+        int result = employeePayrollDBIOService.updateEmployeeData(name, salary);
+        if (result == 0) return;
+        EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
+        if (employeePayrollData != null) employeePayrollData.salary = salary;
+    }
+
+    private EmployeePayrollData getEmployeePayrollData(String name) {
+        return this.employeePayrollList.stream()
+                   .filter(employeePayrollDataItem -> employeePayrollDataItem.name.equals(name))
+                   .findFirst()
+                   .orElse(null);
     }
 
     public void writeEmployeePayrollData(IOService ioService) {

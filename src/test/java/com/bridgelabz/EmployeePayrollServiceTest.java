@@ -2,6 +2,7 @@ package com.bridgelabz;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +34,16 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenEmployeePayrollInDB_WhenRetrieved_ShouldMatchEmployeeCount() {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        List<EmployeePayrollData> employeePayrollList = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Assert.assertEquals(3, employeePayrollList.size());
+    }
+
+    @Test
+    public void givenNewSalaryForEmployee_WhenUpdated_ShouldSyncWithDatabase() {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.updateEmployeeSalary("Terisa", 3000000.00);
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
+        Assert.assertTrue(result);
     }
 }
