@@ -7,8 +7,10 @@ import java.util.Scanner;
 public class EmployeePayrollService {
 
     public enum IOService {CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
+
     private List<EmployeePayrollData> employeePayrollList;
     private EmployeePayrollDBIOService employeePayrollDBIOService;
+
     public EmployeePayrollService() {
         employeePayrollDBIOService = EmployeePayrollDBIOService.getInstance();
     }
@@ -60,14 +62,14 @@ public class EmployeePayrollService {
 
     private EmployeePayrollData getEmployeePayrollData(String name) {
         return this.employeePayrollList.stream()
-                   .filter(employeePayrollDataItem -> employeePayrollDataItem.name.equals(name))
-                   .findFirst()
-                   .orElse(null);
+                .filter(employeePayrollDataItem -> employeePayrollDataItem.name.equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     public void writeEmployeePayrollData(IOService ioService) {
         if (ioService.equals(IOService.CONSOLE_IO))
-        System.out.println("\nWriting Employee Payroll Roaster to console\n" + employeePayrollList);
+            System.out.println("\nWriting Employee Payroll Roaster to console\n" + employeePayrollList);
         else if (ioService.equals(IOService.FILE_IO)) {
             new EmployeePayrollFileIOService().writeData(employeePayrollList);
         }
