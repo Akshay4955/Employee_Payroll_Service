@@ -3,7 +3,9 @@ package com.bridgelabz;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollDBIOService {
 
@@ -39,6 +41,34 @@ public class EmployeePayrollDBIOService {
     public List<EmployeePayrollData> getEmployeePayrollForDateRange(LocalDate startDate, LocalDate endDate) {
         String sql = String.format("select * from employee_payroll where start between '%s' and '%s';",Date.valueOf(startDate), Date.valueOf(endDate));
         return this.getEmployeePayrollDataUsingDB(sql);
+    }
+
+
+    public Map<String, Double> getAverageSalaryByGender() {
+        String sql = "select gender, avg(salary) as salary from employee_payroll group by gender;";
+        return this.getSalaryGroupedByGender(sql);
+    }
+
+
+    public Map<String, Double> getSumSalaryByGender() {
+        String sql = "select gender, sum(salary) as salary from employee_payroll group by gender;";
+        return this.getSalaryGroupedByGender(sql);
+    }
+
+    private Map<String, Double> getSalaryGroupedByGender(String sql) {
+        Map<String, Double> genderToSalaryMap = new HashMap<>();
+        try (Connection connection = this.getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                String gender = resultSet.getString("gender");
+                double salary = resultSet.getDouble("salary");
+                genderToSalaryMap.put(gender, salary);
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return genderToSalaryMap;
     }
 
     private List<EmployeePayrollData> getEmployeePayrollDataUsingDB(String sql) {
